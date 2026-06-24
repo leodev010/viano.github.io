@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIANO - Every Journey Has A Story</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;750&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F9FA; /* Đổi sang màu trắng Alabaster hiện đại, sáng sủa và thanh lịch */
+            color: #18181B; /* Đen Zinc sâu thẳm, dễ đọc hơn */
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        h1, h2, h3, h4, h5, .font-serif {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        html { scroll-behavior: smooth; }
+
+        /* Hiệu ứng mờ thủy tinh tối ưu hóa hiệu năng, trắng tinh khiết hiện đại */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(24, 24, 27, 0.06);
+        }
+
+        #loading-overlay {
+            transition: opacity 0.4s ease;
+        }
+        .spinner {
+            width: 45px;
+            height: 45px;
+            border: 3px solid rgba(197, 168, 128, 0.15);
+            border-radius: 50%;
+            border-top-color: #C5A880; /* Màu vàng Gold hoàng gia */
+            animation: spin 0.8s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .text-shadow-md {
+            text-shadow: 0 2px 8px rgba(0,0,0,0.5), 0 1px 2px rgba(0,0,0,0.4);
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .toast-animate {
+            animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* Tối ưu hóa chuyển động Vinyl xoay bằng Hardware Acceleration */
+        .vinyl-spin {
+            animation: spin 8s linear infinite;
+            will-change: transform;
+            transform: translate3d(0, 0, 0);
+        }
+        .vinyl-spin.paused {
+            animation-play-state: paused;
+        }
+        
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #E4E4E7; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #C5A880; }
+
+        /* Hiệu ứng bìa rực rỡ nắng ấm tinh giản chi phí GPU */
+        .shimmer-bg {
+            background: linear-gradient(135deg, #FDFDFD 0%, #F8F9FA 50%, #F1F3F5 100%);
+            box-shadow: inset 0 0 40px rgba(197, 168, 128, 0.05);
+        }
+
+        @keyframes subtlePulse {
+            0%, 100% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.03); opacity: 1; }
+        }
+        .pulse-audio {
+            animation: subtlePulse 2s infinite ease-in-out;
+        }
+
+        /* Gáy sách 3D sang trọng cho trang đôi */
+        .book-spine {
+            width: 14px;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(0,0,0,0.15) 0%, rgba(255,255,255,0.1) 50%, rgba(0,0,0,0.15) 100%);
+            box-shadow: inset 1px 0 0 rgba(255,255,255,0.05), inset -1px 0 0 rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 40;
+        }
+    </style>
+</head>
+
+<body class="antialiased selection:bg-[#C5A880] selection:text-white">
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 z-[100] flex flex-col gap-2"></div>
+
+    <!-- MAIN LANDING PAGE VIEW -->
+    <main id="landing-view" class="transition-opacity duration-500">
+        
+        <!-- Header -->
+        <header class="absolute top-0 w-full z-10 px-6 py-6 flex justify-between items-center max-w-7xl mx-auto left-0 right-0">
+            <div class="text-2xl font-serif font-bold tracking-widest text-zinc-900 flex items-center gap-2">
+                <span class="w-9 h-9 rounded-full bg-gradient-to-br from-[#C5A880] to-[#9A7E56] flex items-center justify-center text-white text-sm font-serif font-bold shadow-md">V</span>
+                <span class="tracking-widest">VIANO</span>
+            </div>
+            <nav class="hidden md:flex gap-8 text-sm font-semibold text-zinc-500">
+                <a href="#how-it-works" class="hover:text-zinc-950 transition">Cách hoạt động</a>
+                <a href="#demo" class="hover:text-zinc-950 transition">Bản Mẫu</a>
+                <a href="#newsletter" class="hover:text-zinc-950 transition">Đăng ký</a>
+            </nav>
+            <button onclick="scrollToGenerator()" class="bg-gradient-to-r from-zinc-900 to-zinc-800 text-white px-6 py-3 rounded-full text-sm font-medium hover:scale-105 transition duration-300 shadow-sm">
+                Tạo StoryBook
+            </button>
+        </header>
+
+        <!-- Hero Section - Optimized background image to reduce loading times -->
+        <section class="relative pt-32 pb-20 lg:pt-40 lg:pb-28 px-6 min-h-screen flex items-center bg-[url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?q=70&w=1200&auto=format&fit=crop')] bg-cover bg-center">
+            <div class="absolute inset-0 bg-white/90 backdrop-blur-[1px]"></div>
+            
+            <div class="max-w-7xl mx-auto w-full relative z-10 grid lg:grid-cols-2 gap-12 items-center">
+                
+                <!-- Hero Copy -->
+                <div class="max-w-xl">
+                    <span class="inline-block px-4 py-1.5 rounded-full bg-zinc-100 text-[#9A7E56] text-xs font-bold uppercase tracking-wider mb-4 shadow-sm">✨ Giữ trọn vẹn nét nguyên bản</span>
+                    <h1 class="text-5xl lg:text-7xl font-serif font-bold text-zinc-900 leading-tight mb-6">
+                        Every Journey <br>
+                        <span class="italic text-[#C5A880]">Has A Story</span>
+                    </h1>
+                    <p class="text-lg text-zinc-600 mb-8 leading-relaxed">
+                        Thiết kế cuốn sách ảnh kỹ thuật số tuyệt đẹp với kích thước ảnh gốc sắc nét tuyệt đối, không nén mờ. Tận hưởng cảm giác lật trang thơ mộng cùng âm nhạc acoustic êm dịu.
+                    </p>
+                    <div class="flex gap-4">
+                        <button onclick="scrollToGenerator()" class="bg-zinc-900 text-white px-8 py-4 rounded-full font-bold hover:bg-zinc-800 hover:shadow-xl transition-all duration-300 flex items-center gap-3">
+                            <span>Bắt đầu trải nghiệm ngay</span>
+                            <i data-lucide="sparkles" class="w-5 h-5 text-amber-300 animate-pulse"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- MVP Generator Form -->
+                <div id="generator-section" class="glass-card rounded-3xl p-8 shadow-2xl border border-white/60 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-amber-200/5 rounded-full blur-2xl pointer-events-none"></div>
+                    <div class="text-center mb-6">
+                        <h2 class="text-2xl font-serif font-bold text-zinc-900 mb-1">Thiết kế Storybook của bạn</h2>
+                        <p class="text-xs text-zinc-400 font-semibold">Tải lên tối đa 15 bức ảnh chất lượng gốc 🚀</p>
+                    </div>
+
+                    <form id="storybook-form" class="space-y-4" onsubmit="handleGenerate(event)">
+                        <!-- Input Name & Title -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-zinc-500 mb-1.5 uppercase tracking-wide">Tên của bạn</label>
+                                <input type="text" id="authorName" required placeholder="VD: Khánh Linh" class="w-full px-4 py-3 rounded-xl border border-zinc-200 focus:ring-2 focus:ring-[#C5A880] focus:border-transparent outline-none transition bg-white text-sm font-medium text-zinc-800">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-zinc-500 mb-1.5 uppercase tracking-wide">Tên câu chuyện</label>
+                                <input type="text" id="storyTitle" required placeholder="VD: Nắng Vàng Phú Quốc" class="w-full px-4 py-3 rounded-xl border border-zinc-200 focus:ring-2 focus:ring-[#C5A880] focus:border-transparent outline-none transition bg-white text-sm font-medium text-zinc-800">
+                            </div>
+                        </div>
+
+                        <!-- Trip Dates (Start & End) - Optional (Không bắt buộc) -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-zinc-500 mb-1.5 uppercase tracking-wide">Ngày đi (Tùy chọn)</label>
+                                <input type="date" id="startDate" class="w-full px-4 py-3 rounded-xl border border-zinc-200 focus:ring-2 focus:ring-[#C5A880] focus:border-transparent outline-none transition bg-white text-sm font-medium text-zinc-700">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-zinc-500 mb-1.5 uppercase tracking-wide">Ngày về (Tùy chọn)</label>
+                                <input type="date" id="endDate" class="w-full px-4 py-3 rounded-xl border border-zinc-200 focus:ring-2 focus:ring-[#C5A880] focus:border-transparent outline-none transition bg-white text-sm font-medium text-zinc-700">
+                            </div>
+                        </div>
+
+                        <!-- Upload Photo Dropzone / Previews -->
+                        <div>
+                            <div class="flex justify-between items-end mb-2">
+                                <label class="block text-xs font-bold text-zinc-500 uppercase tracking-wide">Album ảnh hành trình</label>
+                                <span id="photo-count" class="text-xs text-[#C5A880] font-bold bg-zinc-100 px-2.5 py-1 rounded-full border border-zinc-200">0/15 ảnh</span>
+                            </div>
+                            
+                            <!-- Dropzone -->
+                            <div id="dropzone" class="w-full border-2 border-dashed border-zinc-300 rounded-2xl p-8 flex flex-col items-center justify-center text-zinc-500 hover:border-[#C5A880] hover:bg-zinc-50/40 transition duration-300 cursor-pointer bg-white" onclick="triggerFileInput()">
+                                <div class="w-12 h-12 rounded-full bg-zinc-50 flex items-center justify-center mb-2.5 border border-zinc-100 text-[#C5A880]">
+                                    <i data-lucide="image-plus" class="w-6 h-6"></i>
+                                </div>
+                                <p class="text-sm font-bold text-zinc-700 text-center">Bấm vào đây để tải ảnh lên</p>
+                                <p class="text-xs text-zinc-400 mt-1 text-center font-medium">Giữ nguyên kích thước và chất lượng gốc của ảnh</p>
+                                <input type="file" id="file-upload" multiple accept="image/*" class="hidden" onchange="handleFiles(this.files)">
+                            </div>
+
+                            <!-- Preview List with dynamic "Add More" Button at bottom -->
+                            <div id="preview-container" class="hidden mt-4 space-y-3">
+                                <div id="preview-list" class="space-y-3 max-h-[220px] overflow-y-auto pr-2">
+                                    <!-- Dynamic list items injected here -->
+                                </div>
+                                <div id="add-more-wrapper">
+                                    <!-- 'Add more' button sits dynamically right under preview items -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="w-full bg-gradient-to-r from-[#C5A880] to-[#9A7E56] text-white py-4 rounded-xl font-bold text-base hover:shadow-xl hover:scale-[1.01] active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 shadow-md">
+                            <i data-lucide="wand-2" class="w-5 h-5 text-amber-200"></i>
+                            Tạo StoryBook Ngay
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works Section -->
+        <section id="how-it-works" class="py-24 bg-white border-t border-zinc-100">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl font-serif font-bold text-zinc-900 mb-4">Cách Thức Hoạt Động</h2>
+                    <p class="text-zinc-500 max-w-xl mx-auto font-medium">Chỉ trong vòng chưa đầy 1 phút, bạn đã sở hữu một tác phẩm nghệ thuật kỹ thuật số sẵn sàng để chia sẻ.</p>
+                </div>
+                
+                <div class="grid md:grid-cols-4 gap-8">
+                    <div class="text-center p-8 rounded-3xl bg-zinc-50/50 border border-zinc-200/60 hover:shadow-lg hover:-translate-y-1 transition duration-300">
+                        <div class="w-12 h-12 rounded-2xl bg-zinc-100 text-[#C5A880] flex items-center justify-center mx-auto text-xl font-bold mb-5">1</div>
+                        <h3 class="text-lg font-serif font-bold text-zinc-900 mb-2">Tải Ảnh Nguyên Bản</h3>
+                        <p class="text-zinc-500 text-xs leading-relaxed">Chọn tối đa 15 bức ảnh chất lượng cao mà không lo bị thay đổi kích cỡ.</p>
+                    </div>
+                    <div class="text-center p-8 rounded-3xl bg-zinc-50/50 border border-zinc-200/60 hover:shadow-lg hover:-translate-y-1 transition duration-300">
+                        <div class="w-12 h-12 rounded-2xl bg-zinc-100 text-[#C5A880] flex items-center justify-center mx-auto text-xl font-bold mb-5">2</div>
+                        <h3 class="text-lg font-serif font-bold text-zinc-900 mb-2">Ghi Lời Chú Chú Thích</h3>
+                        <p class="text-zinc-500 text-xs leading-relaxed">Ghi lại vài dòng cảm xúc hoặc mốc thời gian ngắn cho từng khung hình.</p>
+                    </div>
+                    <div class="text-center p-8 rounded-3xl bg-zinc-50/50 border border-zinc-200/60 hover:shadow-lg hover:-translate-y-1 transition duration-300">
+                        <div class="w-12 h-12 rounded-2xl bg-zinc-100 text-[#C5A880] flex items-center justify-center mx-auto text-xl font-bold mb-5">3</div>
+                        <h3 class="text-lg font-serif font-bold text-zinc-900 mb-2">Dàn Sách Tự Động</h3>
+                        <p class="text-zinc-500 text-xs leading-relaxed">Hệ thống phân loại ảnh thông minh giúp ảnh ngang hiển thị trọn vẹn 2 trang.</p>
+                    </div>
+                    <div class="text-center p-8 rounded-3xl bg-zinc-50/50 border border-zinc-200/60 hover:shadow-lg hover:-translate-y-1 transition duration-300">
+                        <div class="w-12 h-12 rounded-2xl bg-zinc-100 text-[#C5A880] flex items-center justify-center mx-auto text-xl font-bold mb-5">4</div>
+                        <h3 class="text-lg font-serif font-bold text-zinc-900 mb-2">Chia Sẻ Thế Giới</h3>
+                        <p class="text-zinc-500 text-xs leading-relaxed">Nhận liên kết độc quyền để khoe trải nghiệm cùng giai điệu acoustic chill.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Static Showcase Demo -->
+        <section id="demo" class="py-24 bg-zinc-50 border-t border-zinc-100">
+            <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
+                <div class="relative w-full aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl group cursor-pointer" onclick="scrollToGenerator(); showToast('Hãy thử tạo cuốn sách của riêng bạn nhé!');">
+                    <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=70&w=1000&auto=format&fit=crop" alt="Japan Story" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-700" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex flex-col justify-end p-10 text-white">
+                        <h3 class="text-3xl font-serif font-bold mb-2">My Journey In Japan</h3>
+                        <p class="text-white/80 font-medium mb-6 flex gap-4 text-sm">
+                            <span>📍 Tokyo - Kyoto - Fuji</span>
+                            <span>📅 12/10/2025 - 20/10/2025</span>
+                        </p>
+                        <button class="bg-white text-zinc-900 w-max px-6 py-2.5 rounded-full text-xs font-bold flex items-center gap-2 hover:bg-[#C5A880] hover:text-white transition duration-300">
+                            <i data-lucide="book-open" class="w-4 h-4"></i> Đọc Bản Demo
+                        </button>
+                    </div>
+                </div>
+                
+                <div>
+                    <h2 class="text-4xl font-serif font-bold text-zinc-900 mb-6 leading-tight">Mỗi Cuốn Sách Là Một Tác Phẩm Nghệ Thuật Riêng</h2>
+                    <p class="text-base text-zinc-600 mb-8 leading-relaxed">
+                        Hệ thống dàn trang tự động thông minh của VIANO giữ cho mạch truyện mượt mà. Khắc phục hoàn toàn lỗi hiển thị của các album thông thường, đem đến giao diện lật sang trọng, thanh tao nhất.
+                    </p>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center gap-3 text-zinc-700 text-sm font-semibold">
+                            <span class="w-6 h-6 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center text-xs"><i data-lucide="check" class="w-4 h-4"></i></span>
+                            Ảnh ngang tự động trải rộng kép cực kỳ mãn nhãn trên màn hình máy tính.
+                        </li>
+                        <li class="flex items-center gap-3 text-zinc-700 text-sm font-semibold">
+                            <span class="w-6 h-6 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center text-xs"><i data-lucide="check" class="w-4 h-4"></i></span>
+                            Thiết kế ảnh bìa tươi sáng, rực rỡ nắng ấm và hiện đại.
+                        </li>
+                        <li class="flex items-center gap-3 text-zinc-700 text-sm font-semibold">
+                            <span class="w-6 h-6 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center text-xs"><i data-lucide="check" class="w-4 h-4"></i></span>
+                            Lưu trữ và hiển thị mốc thời gian chuyến đi chi tiết.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Newsletter / Email Registration Section -->
+        <section id="newsletter" class="py-20 bg-gradient-to-b from-white to-zinc-50 border-t border-zinc-200/50">
+            <div class="max-w-4xl mx-auto px-6 text-center">
+                <span class="text-[#C5A880] text-xs font-bold uppercase tracking-widest mb-3 block">Bản tin VIANO</span>
+                <h2 class="text-3xl md:text-4xl font-serif font-bold text-zinc-950 mb-4">Nhận thông tin cập nhật mới nhất</h2>
+                <p class="text-zinc-600 text-sm max-w-lg mx-auto mb-8 font-medium">Đăng ký email của bạn để nhận những tính năng mới nhất về thiết kế, chia sẻ câu chuyện du lịch và ưu đãi đặc quyền sớm nhất.</p>
+                <form onsubmit="handleSubscribe(event)" class="flex flex-col sm:flex-row gap-3 justify-center max-w-md mx-auto">
+                    <input type="email" id="subscriber-email" required placeholder="Nhập địa chỉ email của bạn..." class="px-5 py-3.5 rounded-xl border border-zinc-200 text-zinc-900 w-full focus:outline-none focus:ring-2 focus:ring-[#C5A880] text-sm bg-white shadow-sm font-medium">
+                    <button type="submit" class="bg-zinc-950 hover:bg-zinc-850 text-white px-7 py-3.5 rounded-xl text-sm font-bold transition shrink-0 shadow-md">Đăng ký</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-zinc-900 text-white py-12 border-t border-zinc-800">
+            <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="text-center md:text-left">
+                    <div class="text-xl font-serif font-bold tracking-widest mb-1 text-amber-200">VIANO</div>
+                    <div class="text-xs text-zinc-400 font-medium">Every Journey Has A Story • 2026</div>
+                </div>
+                <div class="text-xs text-zinc-500">
+                    © 2026 VIANO. Bảo lưu mọi quyền lợi thiết kế.
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <!-- LOADING OVERLAY -->
+    <div id="loading-overlay" class="fixed inset-0 bg-stone-950/95 z-[90] flex flex-col items-center justify-center text-white hidden">
+        <div class="spinner mb-8"></div>
+        <h2 class="text-2xl font-serif mb-2 text-amber-100 tracking-wider">Đang Thiết Kế Cuốn Sách Của Bạn...</h2>
+        <p class="text-stone-400 text-sm">Tối ưu ảnh gốc • Phân phối layout lật trang • Tích hợp nhạc chill ✨</p>
+    </div>
+
+    <!-- STORYBOOK VIEWER APP -->
+    <div id="storybook-app" class="fixed inset-0 bg-[#121214] z-[80] hidden flex flex-col overflow-hidden select-none">
+        
+        <!-- App Header Bar -->
+        <div class="px-6 py-4 flex justify-between items-center z-20 bg-[#1E1E22]/90 backdrop-blur-md border-b border-stone-800 shadow-sm shrink-0">
+            <button onclick="closeStoryBook()" class="bg-stone-900/80 hover:bg-stone-900 rounded-full p-2.5 hover:scale-105 active:scale-95 text-stone-200 transition shadow-sm border border-stone-800 flex items-center gap-1 text-xs font-semibold">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> Quay lại
+            </button>
+            <div class="text-center">
+                <div class="text-sm font-serif font-bold tracking-widest text-stone-100 uppercase" id="header-story-title">VIANO BOOK</div>
+                <div class="text-[10px] font-bold text-stone-400 tracking-wider uppercase mt-0.5" id="header-story-dates">CHUYẾN ĐI</div>
+            </div>
+            <div class="flex gap-2">
+                <button id="btn-toggle-music" onclick="toggleMusic()" class="bg-stone-900/80 hover:bg-stone-900 rounded-full p-2.5 text-stone-200 transition shadow-sm border border-stone-800 flex items-center justify-center relative animate-pulse" title="Bật/Tắt nhạc chill">
+                    <i data-lucide="music" id="music-icon" class="w-5 h-5 vinyl-spin"></i>
+                </button>
+                <!-- <button onclick="shareStory()" class="bg-gradient-to-r from-[#C5A880] to-[#9A7E56] text-stone-950 rounded-full px-5 py-2 text-xs font-bold hover:opacity-95 transition flex items-center gap-1.5 shadow-md">
+                    <i data-lucide="share" class="w-3.5 h-3.5"></i> Chia Sẻ
+                </button> -->
+            </div>
+        </div>
+
+        <!-- Book Viewing Viewport (Căn giữa tuyệt đối) -->
+        <div class="flex-1 w-full flex items-center justify-center relative p-4 md:p-8">
+            <div id="book-viewport" class="w-full h-full max-w-5xl max-h-[70vh] md:max-h-[78vh] flex items-center justify-center self-center justify-self-center my-auto mx-auto relative">
+                <!-- Adaptive Book Frame -->
+                <div id="adaptive-book" class="relative w-full h-full flex items-center justify-center">
+                    <!-- Spreads will be injected here -->
+                </div>
+            </div>
+
+            <!-- Absolute Navigation Controls overlaid nicely -->
+            <button onclick="prevSpread()" class="absolute left-6 md:left-12 bg-[#1E1E22]/90 hover:bg-stone-900 p-3.5 rounded-full shadow-lg text-stone-200 transition border border-stone-800 hover:scale-110 active:scale-95 flex items-center justify-center disabled:opacity-40 disabled:pointer-events-none z-40" id="btn-prev-spread">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i>
+            </button>
+            <button onclick="nextSpread()" class="absolute right-6 md:right-12 bg-[#1E1E22]/90 hover:bg-stone-900 p-3.5 rounded-full shadow-lg text-stone-200 transition border border-stone-800 hover:scale-110 active:scale-95 flex items-center justify-center disabled:opacity-40 disabled:pointer-events-none z-40" id="btn-next-spread">
+                <i data-lucide="arrow-right" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <!-- Progress and indicator layout -->
+        <div class="py-4 bg-[#1E1E22]/50 border-t border-stone-800 flex flex-col items-center gap-3 shrink-0">
+            <!-- Page Progress Text -->
+            <div class="bg-stone-950/40 backdrop-blur-sm px-4 py-1.5 rounded-full text-[11px] font-bold text-stone-200" id="spread-counter">
+                Trang 1 / 1
+            </div>
+            <!-- Tiny Indicator Dots -->
+            <div class="flex justify-center gap-1.5 z-20 flex-wrap px-4" id="page-dots">
+                <!-- Dots injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Chill Background Music (Acoustic Guitar nhẹ nhàng không bản quyền) -->
+    <audio id="bg-music" loop>
+        <source src="https://assets.mixkit.co/music/preview/mixkit-serene-view-1153.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        lucide.createIcons();
+
+        // --- UNSPLASH DATABASE FOR REAL ONLINE LINKS ---
+        const themeImages = {
+            "phuquoc": [
+                "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=75&w=1200&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1540206351-d6465b3ac5c1?q=75&w=1200&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1519046904884-53103b34b206?q=75&w=1200&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1506929562872-bb421503ef21?q=75&w=1200&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1473448912268-2022ce9509d8?q=75&w=1200&auto=format&fit=crop"
+            ],
+            "kyoto": [
+                "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=75&w=1200&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1490730141103-6cac27aaab94?q=75&w=1200&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?q=75&w=1200&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1542044896530-05d85be9b11a?q=75&w=1200&auto=format&fit=crop"
+            ],
+            "dalat": [
+                "https://images.unsplash.com/photo-1448375240586-882707db888b?q=75&w=1200&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1475924156734-496f6cac6ec1?q=75&w=1200&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1511497584788-876760111969?q=75&w=1200&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1502082553048-f009c37129b9?q=75&w=1200&auto=format&fit=crop"
+            ],
+            "sapa": [
+                "https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=75&w=1200&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=75&w=1200&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1454496522488-7a8e488e8606?q=75&w=1200&auto=format&fit=crop"
+            ],
+            "generic": [
+                "https://images.unsplash.com/photo-1488646953014-85cb44e25828?q=75&w=1200&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=75&w=1200&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=75&w=1200&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1501854140801-50d01698950b?q=75&w=1200&auto=format&fit=crop"
+            ]
+        };
+
+        // --- APPLICATION STATE ---
+        let uploadedImages = []; // Array of { id, url, caption, orientation, aspectRatio }
+        let storyData = { authorName: '', storyTitle: '', startDate: '', endDate: '' };
+        let currentSpreadIndex = 0;
+        let generatedSpreads = []; // Holds structured pages or spreads
+        let isMusicPlaying = false;
+        const MAX_IMAGES = 15;
+
+        // Debounce utility to prevent extreme layout thrashing during browser resizes
+        function debounce(func, wait) {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
+        }
+
+        // --- TOAST NOTIFICATIONS ---
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'bg-stone-900 text-amber-100 px-6 py-3.5 rounded-full shadow-xl text-xs font-semibold toast-animate flex items-center gap-2 border border-stone-800';
+            toast.innerHTML = `<i data-lucide="info" class="w-4 h-4 text-[#C5A880]"></i> ${message}`;
+            container.appendChild(toast);
+            lucide.createIcons();
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(10px)';
+                toast.style.transition = 'all 0.25s ease';
+                setTimeout(() => toast.remove(), 250);
+            }, 3000);
+        }
+
+        // --- NEWSLETTER SUBSCRIPTION ---
+        function handleSubscribe(e) {
+            e.preventDefault();
+            const emailInput = document.getElementById('subscriber-email');
+            showToast(`Đăng ký thành công với địa chỉ: ${emailInput.value}! 🎉`);
+            emailInput.value = '';
+        }
+
+        function scrollToGenerator() {
+            document.getElementById('generator-section').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function triggerFileInput() {
+            if (uploadedImages.length >= MAX_IMAGES) {
+                showToast(`Đã đạt giới hạn tối đa ${MAX_IMAGES} bức ảnh.`);
+                return;
+            }
+            document.getElementById('file-upload').click();
+        }
+
+        // --- STREAMING_CHUNK: Managing uploaded files and sizes natively... ---
+        function handleFiles(files) {
+            if (!files || files.length === 0) return;
+            const fileArray = Array.from(files);
+            
+            let currentCount = uploadedImages.length;
+            if (currentCount >= MAX_IMAGES) {
+                showToast(`Đã đạt giới hạn tối đa ${MAX_IMAGES} bức ảnh.`);
+                document.getElementById('file-upload').value = ''; 
+                return;
+            }
+
+            let spaceLeft = MAX_IMAGES - currentCount;
+            let filesToProcess = fileArray.slice(0, spaceLeft);
+
+            if (fileArray.length > spaceLeft) {
+                showToast(`Chỉ có thể chọn thêm ${spaceLeft} bức ảnh (Tối đa ${MAX_IMAGES} ảnh).`);
+            }
+
+            let loadedThisBatch = 0;
+            filesToProcess.forEach((file) => {
+                // Sử dụng Object URL trực tiếp để giữ nguyên 100% kích thước và tỷ lệ gốc không nén mờ
+                const objectUrl = URL.createObjectURL(file);
+                
+                const tempImg = new Image();
+                tempImg.onload = function() {
+                    const width = this.width;
+                    const height = this.height;
+                    const orientation = width / height > 1.1 ? 'landscape' : 'portrait';
+                    
+                    uploadedImages.push({
+                        id: 'img-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
+                        url: objectUrl,
+                        caption: '',
+                        orientation: orientation,
+                        aspectRatio: width / height
+                    });
+                    
+                    loadedThisBatch++;
+                    if (loadedThisBatch === filesToProcess.length) {
+                        renderPreviewList();
+                    }
+                };
+                tempImg.onerror = function() {
+                    loadedThisBatch++;
+                    if (loadedThisBatch === filesToProcess.length) {
+                        renderPreviewList();
+                    }
+                };
+                tempImg.src = objectUrl;
+            });
+
+            // Giải phóng giá trị để có thể chọn cùng một file ở các lượt sau
+            document.getElementById('file-upload').value = '';
+        }
+
+        // --- STREAMING_CHUNK: Building the preview component & add-more button... ---
+        function renderPreviewList() {
+            const list = document.getElementById('preview-list');
+            const previewContainer = document.getElementById('preview-container');
+            const dropzone = document.getElementById('dropzone');
+            const count = document.getElementById('photo-count');
+            const addMoreWrapper = document.getElementById('add-more-wrapper');
+            
+            count.innerText = `${uploadedImages.length}/${MAX_IMAGES} ảnh`;
+            list.innerHTML = '';
+            addMoreWrapper.innerHTML = '';
+
+            if (uploadedImages.length > 0) {
+                dropzone.classList.add('hidden');
+                previewContainer.classList.remove('hidden');
+
+                // Lỗi 1: Thêm nút nạp ảnh rỗng dạng nét đứt đặc thù nằm ngay dưới cùng danh sách ảnh
+                if (uploadedImages.length < MAX_IMAGES) {
+                    addMoreWrapper.innerHTML = `
+                        <button type="button" onclick="triggerFileInput()" class="w-full mt-2 py-4 border-2 border-dashed border-stone-300 rounded-xl text-stone-600 hover:border-[#C5A880] hover:text-[#C5A880] hover:bg-stone-50/10 transition-all duration-300 flex items-center justify-center gap-2 font-bold text-xs bg-white">
+                            <i data-lucide="plus-circle" class="w-4 h-4"></i> + Thêm ảnh mới (${uploadedImages.length}/${MAX_IMAGES})
+                        </button>
+                    `;
+                }
+            } else {
+                dropzone.classList.remove('hidden');
+                previewContainer.classList.add('hidden');
+            }
+
+            uploadedImages.forEach((img, index) => {
+                const item = document.createElement('div');
+                item.className = 'flex gap-3 p-3 bg-white rounded-xl border border-stone-200 items-center shadow-sm hover:border-stone-300 transition duration-200';
+                item.innerHTML = `
+                    <div class="relative w-16 h-16 shrink-0 rounded-lg overflow-hidden border border-stone-100 bg-stone-100 flex items-center justify-center">
+                        <img src="${img.url}" class="w-full h-full object-cover">
+                        <span class="absolute bottom-0 left-0 right-0 text-center bg-black/60 text-white text-[9px] py-0.5 font-semibold uppercase tracking-wider">${img.orientation === 'landscape' ? 'Ngang' : 'Dọc'}</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <textarea placeholder="Ghi chú câu chuyện của bức ảnh này..." class="w-full h-12 bg-stone-50 border border-stone-100 rounded-lg outline-none resize-none text-xs text-stone-700 p-2 focus:bg-white focus:border-stone-200 focus:ring-1 focus:ring-stone-200 transition" onchange="updateCaption('${img.id}', this.value)">${img.caption}</textarea>
+                    </div>
+                    <button type="button" onclick="removeImage('${img.id}')" class="p-2 text-stone-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition shrink-0">
+                        <i data-lucide="trash-2" class="w-4.5 h-4.5"></i>
+                    </button>
+                `;
+                list.appendChild(item);
+            });
+
+            lucide.createIcons();
+        }
+
+        function updateCaption(id, value) {
+            const img = uploadedImages.find(i => i.id === id);
+            if(img) img.caption = value;
+        }
+
+        function removeImage(id) {
+            // Tối ưu giải phóng ObjectURL tránh rò rỉ RAM bộ nhớ đệm
+            const img = uploadedImages.find(i => i.id === id);
+            if (img && img.url.startsWith('blob:')) {
+                URL.revokeObjectURL(img.url);
+            }
+            uploadedImages = uploadedImages.filter(i => i.id !== id);
+            renderPreviewList();
+        }
+
+        // --- FORMAT DATE HELPER ---
+        function formatVietnameseDate(dateStr) {
+            if(!dateStr) return '';
+            const d = new Date(dateStr);
+            if(isNaN(d.getTime())) return '';
+            const day = String(d.getDate()).padStart(2, '0');
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const year = d.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+
+        // --- STREAMING_CHUNK: Trigerring creation and loading screen... ---
+        function handleGenerate(e) {
+            if(e) e.preventDefault();
+            
+            if (uploadedImages.length === 0) {
+                showToast('Hãy tải lên tối thiểu 1 bức ảnh để làm sách!');
+                return;
+            }
+            
+            storyData.authorName = document.getElementById('authorName').value;
+            storyData.storyTitle = document.getElementById('storyTitle').value;
+            storyData.startDate = document.getElementById('startDate').value;
+            storyData.endDate = document.getElementById('endDate').value;
+
+            // Đột phá phát nhạc: Kích hoạt âm thanh ngay lập tức thông qua tương tác người dùng khi click "Tạo"
+            forcePlayMusic();
+
+            document.getElementById('loading-overlay').classList.remove('hidden');
+            
+            setTimeout(() => {
+                buildSpreads();
+                renderBookSpread();
+                
+                document.getElementById('loading-overlay').classList.add('hidden');
+                document.getElementById('landing-view').classList.add('hidden');
+                document.getElementById('storybook-app').classList.remove('hidden');
+                
+                currentSpreadIndex = 0;
+                updateNavigationUI();
+            }, 2000);
+        }
+
+        // --- STREAMING_CHUNK: Structuring layout pages dynamically... ---
+        function buildSpreads() {
+            generatedSpreads = [];
+            
+            // Định dạng ngày đi/về không bắt buộc
+            const startFormatted = formatVietnameseDate(storyData.startDate);
+            const endFormatted = formatVietnameseDate(storyData.endDate);
+            let displayDates = 'HÀNH TRÌNH ĐÁNG NHỚ';
+            if (startFormatted && endFormatted) {
+                displayDates = `${startFormatted} — ${endFormatted}`;
+            } else if (startFormatted) {
+                displayDates = `Khởi hành từ ${startFormatted}`;
+            } else if (endFormatted) {
+                displayDates = `Lưu giữ đến ${endFormatted}`;
+            }
+
+            document.getElementById('header-story-title').innerText = storyData.storyTitle.toUpperCase();
+            document.getElementById('header-story-dates').innerText = displayDates;
+
+            // Hình ảnh bìa tươi sáng, rực rỡ năng ấm biển khơi hoặc núi đồi tinh tế
+            const coverImageUrl = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=75&w=1200&auto=format&fit=crop";
+
+            // 1. FRONT COVER SPREAD (Bìa đơn rực rỡ ở chính giữa màn hình)
+            generatedSpreads.push({
+                type: 'cover',
+                left: null,
+                right: {
+                    type: 'cover-content',
+                    bg: coverImageUrl,
+                    title: storyData.storyTitle,
+                    author: storyData.authorName,
+                    dates: displayDates
+                }
+            });
+
+            // 2. INTRO SPREAD (Lời mở đầu)
+            generatedSpreads.push({
+                type: 'intro',
+                left: {
+                    type: 'intro-left',
+                    dates: displayDates
+                },
+                right: {
+                    type: 'intro-right',
+                    title: storyData.storyTitle,
+                    author: storyData.authorName
+                }
+            });
+
+            // 3. IMAGES LAYOUT DOCKING (Dàn trang)
+            let i = 0;
+            while (i < uploadedImages.length) {
+                const img = uploadedImages[i];
+                
+                if (img.orientation === 'landscape') {
+                    // Lỗi 2: ẢNH NGANG tự động dàn trang tràn hoàn toàn trên 2 trang (landscape-spread)
+                    generatedSpreads.push({
+                        type: 'landscape-spread',
+                        left: null,
+                        right: null,
+                        raw: img
+                    });
+                    i++;
+                } else {
+                    const firstImg = img;
+                    let secondImg = null;
+                    
+                    // Ghép cặp ảnh dọc nếu có
+                    if (i + 1 < uploadedImages.length && uploadedImages[i + 1].orientation === 'portrait') {
+                        secondImg = uploadedImages[i + 1];
+                        i += 2;
+                    } else {
+                        i++;
+                    }
+
+                    generatedSpreads.push({
+                        type: 'portrait-double',
+                        left: {
+                            type: 'portrait-photo',
+                            url: firstImg.url,
+                            caption: firstImg.caption
+                        },
+                        right: secondImg ? {
+                            type: 'portrait-photo',
+                            url: secondImg.url,
+                            caption: secondImg.caption
+                        } : {
+                            type: 'blank',
+                            placeholder: 'VIANO • Lưu giữ từng nét nguyên bản'
+                        }
+                    });
+                }
+            }
+
+            // 4. BACK COVER SPREAD
+            generatedSpreads.push({
+                type: 'back-cover',
+                left: {
+                    type: 'back-content',
+                    title: storyData.storyTitle,
+                    author: storyData.authorName
+                },
+                right: null
+            });
+        }
+
+        // --- STREAMING_CHUNK: Injecting HTML nodes into book viewport... ---
+        function renderBookSpread() {
+            const container = document.getElementById('adaptive-book');
+            container.innerHTML = '';
+
+            const isMobile = window.innerWidth < 768;
+
+            if (isMobile) {
+                // TRANG ĐƠN TRÊN THIẾT BỊ DI ĐỘNG (Tránh việc hiển thị quá bé)
+                generatedSpreads.forEach((spread, sIndex) => {
+                    const pageEl = document.createElement('div');
+                    pageEl.id = `spread-card-${sIndex}`;
+                    pageEl.className = 'absolute inset-0 w-full h-full bg-[#FCFAF6] shadow-2xl rounded-2xl overflow-hidden transition-all duration-500 scale-95 opacity-0 pointer-events-none flex flex-col justify-between border border-stone-200/40';
+
+                    if (spread.type === 'cover') {
+                        const r = spread.right;
+                        pageEl.innerHTML = `
+                            <div class="relative w-full h-full flex flex-col justify-between p-6 overflow-hidden shimmer-bg rounded-2xl">
+                                <div class="absolute inset-4 border border-[#C5A880]/30 rounded-xl pointer-events-none"></div>
+                                <div class="relative z-10 text-center pt-8">
+                                    <div class="flex justify-center mb-3 text-[#C5A880]">
+                                        <i data-lucide="compass" class="w-10 h-10 animate-spin" style="animation-duration: 30s"></i>
+                                    </div>
+                                    <span class="text-[10px] font-extrabold text-[#C5A880] tracking-widest uppercase">VIANO ART JOURNAL</span>
+                                </div>
+                                <div class="relative z-10 text-center px-4">
+                                    <h1 class="text-3xl font-serif font-bold text-stone-900 leading-tight mb-3 uppercase tracking-wide">${r.title}</h1>
+                                    <div class="w-10 h-[1.5px] bg-[#C5A880] mx-auto my-3"></div>
+                                    <p class="text-xs text-stone-500 italic font-serif mb-1">Câu chuyện hành trình của</p>
+                                    <p class="text-base font-extrabold text-[#9A7E56] uppercase tracking-wider">${r.author}</p>
+                                </div>
+                                <div class="relative z-10 text-center pb-6">
+                                    <div class="inline-block px-4 py-1.5 bg-stone-100/80 rounded-full border border-stone-200/50">
+                                        <p class="text-[10px] font-bold text-stone-600 tracking-wider flex items-center gap-1.5 justify-center">
+                                            <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#C5A880]"></i> ${r.dates}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    } else if (spread.type === 'intro') {
+                        pageEl.innerHTML = `
+                            <div class="w-full h-full p-8 flex flex-col justify-between bg-gradient-to-b from-[#FAF8F5] to-[#F5EFE6] rounded-2xl">
+                                <div class="flex justify-between items-center text-stone-400">
+                                    <i data-lucide="compass" class="w-5 h-5 text-[#C5A880]"></i>
+                                    <span class="text-[9px] font-bold tracking-widest uppercase">VIANO COVERS</span>
+                                </div>
+                                <div class="my-auto py-6 text-center">
+                                    <p class="text-[#C5A880] text-xs font-bold uppercase tracking-widest mb-3">— LỜI MỞ ĐẦU —</p>
+                                    <h2 class="text-2xl font-serif font-bold text-stone-900 mb-4">${spread.right.title}</h2>
+                                    <p class="text-xs text-stone-500 italic max-w-xs mx-auto leading-relaxed">
+                                        "Mỗi bức ảnh gốc là một mảnh ghép chân thực nhất của thời gian, lưu giữ sắc màu thuần khiết của ký ức."
+                                    </p>
+                                </div>
+                                <div class="text-center text-[9px] font-bold text-stone-400 tracking-wider">
+                                    KÝ ỨC CỦA ${spread.right.author.toUpperCase()}
+                                </div>
+                            </div>
+                        `;
+                    } else if (spread.type === 'landscape-spread') {
+                        const imgData = spread.raw;
+                        pageEl.innerHTML = `
+                            <div class="relative w-full h-full flex flex-col bg-stone-950 overflow-hidden rounded-2xl justify-between">
+                                <div class="absolute inset-0 opacity-20 blur-xl scale-125" style="background-image: url('${imgData.url}'); background-size: cover; background-position: center;"></div>
+                                <div class="h-4"></div>
+                                <div class="relative flex-1 flex items-center justify-center p-4">
+                                    <img src="${imgData.url}" class="w-full h-full object-contain rounded-lg shadow-2xl z-10">
+                                </div>
+                                ${imgData.caption ? `
+                                <div class="relative z-10 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-6 pt-12 text-white shrink-0">
+                                    <p class="font-serif text-sm leading-relaxed text-shadow-md text-center text-amber-100">${imgData.caption}</p>
+                                </div>
+                                ` : '<div class="h-4"></div>'}
+                            </div>
+                        `;
+                    } else if (spread.type === 'portrait-double') {
+                        const p = spread.left;
+                        pageEl.innerHTML = `
+                            <div class="relative w-full h-full flex flex-col justify-between bg-stone-900 overflow-hidden rounded-2xl">
+                                <div class="absolute inset-0 bg-stone-950 flex items-center justify-center">
+                                    <img src="${p.url}" class="w-full h-full object-cover">
+                                </div>
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none"></div>
+                                <div class="h-10"></div>
+                                ${p.caption ? `
+                                <div class="relative z-10 p-6 text-white bg-gradient-to-t from-black/90 via-black/30 to-transparent">
+                                    <p class="font-serif text-sm text-center leading-relaxed text-shadow-md">${p.caption}</p>
+                                </div>
+                                ` : ''}
+                            </div>
+                        `;
+                    } else if (spread.type === 'back-cover') {
+                        pageEl.innerHTML = `
+                            <div class="w-full h-full bg-stone-950 text-white p-8 flex flex-col justify-between text-center relative overflow-hidden rounded-2xl">
+                                <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#c5a880_1px,transparent_1px)] [background-size:16px_16px]"></div>
+                                <div class="text-center pt-6">
+                                    <span class="text-[#C5A880] text-[10px] font-bold tracking-widest uppercase">LƯU GIỮ TRỌN ĐỜI</span>
+                                </div>
+                                <div class="my-auto relative z-10">
+                                    <div class="w-16 h-16 rounded-full bg-stone-900 border border-stone-800 flex items-center justify-center mx-auto mb-6 text-[#C5A880]">
+                                        <i data-lucide="book-heart" class="w-8 h-8 animate-pulse"></i>
+                                    </div>
+                                    <h3 class="text-2xl font-serif font-bold text-stone-100 mb-2">${spread.left.title}</h3>
+                                    <p class="text-xs text-stone-400 font-medium">Thiết kế bởi ${spread.left.author}</p>
+                                </div>
+                                <div class="pb-4 relative z-10 flex flex-col gap-2">
+                                    <button onclick="shareStory()" class="w-full py-3 bg-gradient-to-r from-[#C5A880] to-[#9A7E56] text-stone-950 rounded-xl text-xs font-bold hover:opacity-95 transition">Chia Sẻ Tác Phẩm</button>
+                                    <button onclick="closeStoryBook()" class="w-full py-3 border border-stone-800 text-stone-400 rounded-xl text-xs font-bold hover:bg-stone-900 transition">Quay Lại Sửa</button>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    container.appendChild(pageEl);
+                });
+            } else {
+                // TRÌNH BÀY MỞ ĐÔI CAO CẤP TRÊN MÁY TÍNH (ẢNH KHÔNG CO GIÃN SAI TỶ LỆ)
+                generatedSpreads.forEach((spread, sIndex) => {
+                    const spreadEl = document.createElement('div');
+                    spreadEl.id = `spread-card-${sIndex}`;
+                    spreadEl.className = 'absolute inset-0 w-full h-full bg-transparent transition-all duration-500 scale-95 opacity-0 pointer-events-none flex items-center justify-center';
+
+                    if (spread.type === 'landscape-spread') {
+                        // ẢNH NGANG: HIỂN THỊ TRỌN VẸN 100% TRÊN 2 TRANG, KHÔNG CÓ HIỆU ỨNG GÁY SÁCH CHE KHUẤT
+                        const imgData = spread.raw;
+                        spreadEl.innerHTML = `
+                            <div class="w-full h-full bg-[#FAF8F5] relative shadow-2xl rounded-3xl overflow-hidden flex items-center justify-center border border-stone-200/50">
+                                <img src="${imgData.url}" class="w-full h-full object-cover block mx-auto relative z-10 rounded-lg">
+                                ${imgData.caption ? `
+                                <div class="absolute bottom-0 left-0 right-0 h-1/4 bg-gradient-to-t from-black/80 to-transparent z-20 pointer-events-none flex items-end justify-center p-8">
+                                    <p class="font-serif text-white text-base leading-relaxed text-shadow-md text-center max-w-2xl">${imgData.caption}</p>
+                                </div>
+                                ` : ''}
+                            </div>
+                        `;
+                    } else {
+                        // GIAO DIỆN SÁCH CÓ GÁY SÁCH Ở GIỮA CHO ẢNH DỌC VÀ TRANG CHỮ
+                        let leftHtml = '';
+                        let rightHtml = '';
+
+                        if (spread.type === 'cover') {
+                            leftHtml = `
+                                <div class="w-full h-full bg-stone-950 rounded-l-3xl flex items-center justify-center relative overflow-hidden border-r border-stone-900">
+                                    <div class="absolute inset-0 opacity-15" style="background-image: radial-gradient(circle, #c5a880 1.5px, transparent 1.5px); background-size: 24px 24px;"></div>
+                                    <div class="text-center text-[#C5A880]/30 font-serif text-xs tracking-widest uppercase font-bold">VIANO BOOK SERIES</div>
+                                </div>
+                            `;
+                            
+                            const r = spread.right;
+                            rightHtml = `
+                                <div class="relative w-full h-full flex flex-col justify-between p-12 overflow-hidden shimmer-bg rounded-r-3xl border-l border-stone-200/40">
+                                    <div class="absolute top-0 -left-1/2 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-12 pointer-events-none z-10"></div>
+                                    <div class="absolute inset-6 border border-[#C5A880]/20 rounded-2xl pointer-events-none"></div>
+                                    
+                                    <div class="relative z-10 text-center pt-4">
+                                        <div class="flex justify-center mb-3 text-[#C5A880]">
+                                            <i data-lucide="compass" class="w-12 h-12 animate-spin" style="animation-duration: 40s"></i>
+                                        </div>
+                                        <span class="text-[10px] font-extrabold text-stone-400 tracking-widest uppercase">ORIGINAL MEMORIES JOURNAL</span>
+                                    </div>
+                                    <div class="relative z-10 text-center px-6">
+                                        <h1 class="text-4xl font-serif font-bold text-stone-900 leading-tight mb-4 uppercase tracking-wide drop-shadow-sm">${r.title}</h1>
+                                        <div class="w-14 h-[1.5px] bg-[#C5A880] mx-auto my-4"></div>
+                                        <p class="text-xs text-stone-500 italic font-serif mb-1">Chuyến đi của</p>
+                                        <p class="text-lg font-extrabold text-[#C5A880] uppercase tracking-wider">${r.author}</p>
+                                    </div>
+                                    <div class="relative z-10 text-center pb-4">
+                                        <div class="inline-block px-4 py-1.5 bg-stone-100/80 rounded-full border border-stone-200/60">
+                                            <p class="text-xs font-bold text-stone-600 tracking-wider flex items-center justify-center gap-1.5">
+                                                <i data-lucide="calendar" class="w-4 h-4 text-[#C5A880]"></i> ${r.dates}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        } else if (spread.type === 'intro') {
+                            leftHtml = `
+                                <div class="w-full h-full bg-gradient-to-br from-[#FCFAF6] to-[#F5EFE6] p-12 flex flex-col justify-between rounded-l-3xl border-r border-stone-200/50">
+                                    <div class="text-[10px] font-bold text-stone-400 tracking-widest uppercase">VIANO ARCHIVE</div>
+                                    <div class="my-auto max-w-sm mx-auto text-center py-8">
+                                        <p class="text-sm text-stone-500 italic leading-relaxed font-serif">
+                                            "Kỷ niệm không phải là những bức ảnh nén mờ nhạt. Kỷ niệm là sự nguyên bản rực rỡ nhất dưới ánh hoàng hôn."
+                                        </p>
+                                    </div>
+                                    <div class="text-[9px] font-bold text-stone-400 tracking-widest uppercase">EST. 2026</div>
+                                </div>
+                            `;
+                            rightHtml = `
+                                <div class="w-full h-full bg-gradient-to-bl from-[#FCFAF6] to-[#F5EFE6] p-12 flex flex-col justify-between rounded-r-3xl">
+                                    <div class="text-right text-[10px] font-bold text-stone-400 tracking-widest uppercase">${spread.left.dates}</div>
+                                    <div class="my-auto max-w-sm mx-auto text-center py-8">
+                                        <span class="text-[#C5A880] text-xs font-bold uppercase tracking-widest mb-2 block">— KHỞI ĐẦU —</span>
+                                        <h2 class="text-3xl font-serif font-bold text-stone-900 mb-4">${spread.right.title}</h2>
+                                        <p class="text-sm text-stone-500 font-medium">Bắt đầu trải nghiệm các trang ảnh nguyên bản.</p>
+                                    </div>
+                                    <div class="text-center text-[10px] font-bold text-[#C5A880] tracking-widest uppercase">BỞI ${spread.right.author.toUpperCase()}</div>
+                                </div>
+                            `;
+                        } else if (spread.type === 'portrait-double') {
+                            const l = spread.left;
+                            const r = spread.right;
+
+                            leftHtml = `
+                                <div class="relative w-full h-full overflow-hidden rounded-l-3xl border-r border-stone-200/40 bg-[#FAF8F5] flex items-center justify-center p-4">
+                                    <img src="${l.url}" class="w-full h-full object-cover rounded-lg shadow-md z-10">
+                                    ${l.caption ? `
+                                    <div class="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-black/80 to-transparent z-20 pointer-events-none flex items-end justify-center p-6">
+                                        <p class="font-serif text-white text-xs leading-relaxed text-shadow-md text-center">${l.caption}</p>
+                                    </div>
+                                    ` : ''}
+                                </div>
+                            `;
+
+                            if (r.type === 'blank') {
+                                rightHtml = `
+                                    <div class="w-full h-full bg-[#FCFAF6] flex flex-col justify-between p-12 rounded-r-3xl text-center">
+                                        <div class="text-right text-[9px] font-bold text-stone-400 uppercase tracking-wider">VIANO GRAPHICS</div>
+                                        <div class="my-auto py-8">
+                                            <div class="w-12 h-12 rounded-full border border-stone-200 flex items-center justify-center mx-auto mb-4 text-[#C5A880]">
+                                                <i data-lucide="image" class="w-5 h-5"></i>
+                                            </div>
+                                            <p class="font-serif text-stone-400 italic text-xs">${r.placeholder}</p>
+                                        </div>
+                                        <div class="text-[9px] font-bold text-stone-400 tracking-wider">HÀNH TRÌNH KHÔNG QUÊN</div>
+                                    </div>
+                                `;
+                            } else {
+                                rightHtml = `
+                                    <div class="relative w-full h-full overflow-hidden rounded-r-3xl bg-[#FAF8F5] flex items-center justify-center p-4">
+                                        <img src="${r.url}" class="w-full h-full object-cover rounded-lg shadow-md z-10">
+                                        ${r.caption ? `
+                                        <div class="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-black/80 to-transparent z-20 pointer-events-none flex items-end justify-center p-6">
+                                            <p class="font-serif text-white text-xs leading-relaxed text-shadow-md text-center">${r.caption}</p>
+                                        </div>
+                                        ` : ''}
+                                    </div>
+                                `;
+                            }
+                        } else if (spread.type === 'back-cover') {
+                            const l = spread.left;
+                            leftHtml = `
+                                <div class="w-full h-full bg-stone-950 text-white p-12 flex flex-col justify-between text-center rounded-l-3xl border-r border-stone-900 relative overflow-hidden">
+                                    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#c5a880_1px,transparent_1px)] [background-size:20px_20px]"></div>
+                                    <div class="text-left">
+                                        <span class="text-[#C5A880] text-[10px] font-bold tracking-widest uppercase">THE END</span>
+                                    </div>
+                                    <div class="my-auto relative z-10 max-w-xs mx-auto">
+                                        <div class="w-14 h-14 rounded-full bg-stone-900 border border-stone-800 flex items-center justify-center mx-auto mb-5 text-[#C5A880]">
+                                            <i data-lucide="book-heart" class="w-7 h-7"></i>
+                                        </div>
+                                        <h3 class="text-3xl font-serif font-bold text-stone-100 mb-2">${l.title}</h3>
+                                        <p class="text-xs text-stone-400 font-medium">Thiết kế bởi ${l.author}</p>
+                                    </div>
+                                    <div class="relative z-10 flex gap-2">
+                                        <button onclick="shareStory()" class="flex-1 py-3 bg-gradient-to-r from-[#C5A880] to-[#9A7E56] text-stone-950 rounded-xl text-xs font-bold hover:opacity-95 transition shadow">Chia Sẻ Sách</button>
+                                        <button onclick="closeStoryBook()" class="flex-1 py-3 border border-stone-800 text-stone-400 rounded-xl text-xs font-bold hover:bg-stone-900 transition">Sửa Album</button>
+                                    </div>
+                                </div>
+                            `;
+                            rightHtml = `
+                                <div class="w-full h-full bg-[#1C1B19] rounded-r-3xl flex items-center justify-center relative overflow-hidden">
+                                    <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle, #c5a880 1px, transparent 1px); background-size: 24px 24px;"></div>
+                                    <div class="text-center">
+                                        <div class="text-2xl font-serif font-bold tracking-widest text-[#C5A880] mb-1">VIANO</div>
+                                        <div class="text-[9px] font-bold text-stone-500 uppercase tracking-wider">Every Journey Has A Story</div>
+                                    </div>
+                                </div>
+                            `;
+                        }
+
+                        // Ghép 2 trang và nếp gấp gáy sách ở chính giữa không bị che khuất
+                        spreadEl.innerHTML = `
+                            <div class="flex-1 h-full relative shadow-2xl rounded-l-3xl overflow-hidden">
+                                ${leftHtml}
+                            </div>
+                            <div class="book-spine z-30 shrink-0 select-none"></div>
+                            <div class="flex-1 h-full relative shadow-2xl rounded-r-3xl overflow-hidden">
+                                ${rightHtml}
+                            </div>
+                        `;
+                    }
+                    container.appendChild(spreadEl);
+                });
+            }
+
+            lucide.createIcons();
+            buildProgressDots();
+            showActiveSpread();
+        }
+
+        // --- STREAMING_CHUNK: Handling navigation triggers... ---
+        function buildProgressDots() {
+            const container = document.getElementById('page-dots');
+            container.innerHTML = '';
+            for(let i = 0; i < generatedSpreads.length; i++) {
+                container.innerHTML += `<div class="w-2.5 h-2.5 rounded-full transition-all duration-300 cursor-pointer ${i === 0 ? 'bg-[#C5A880] w-5' : 'bg-stone-500'}" id="dot-${i}" onclick="jumpToSpread(${i})"></div>`;
+            }
+        }
+
+        function showActiveSpread() {
+            generatedSpreads.forEach((_, idx) => {
+                const el = document.getElementById(`spread-card-${idx}`);
+                if (!el) return;
+                
+                if (idx === currentSpreadIndex) {
+                    el.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
+                    el.classList.add('opacity-100', 'scale-100');
+                } else {
+                    el.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+                    el.classList.remove('opacity-100', 'scale-100');
+                }
+            });
+
+            const countText = `Trang ${currentSpreadIndex + 1} / ${generatedSpreads.length}`;
+            document.getElementById('spread-counter').innerText = countText;
+            
+            document.getElementById('btn-prev-spread').disabled = (currentSpreadIndex === 0);
+            document.getElementById('btn-next-spread').disabled = (currentSpreadIndex === generatedSpreads.length - 1);
+
+            for(let i=0; i<generatedSpreads.length; i++) {
+                const dot = document.getElementById(`dot-${i}`);
+                if(dot) {
+                    if(i === currentSpreadIndex) {
+                        dot.classList.add('bg-[#C5A880]', 'w-5');
+                        dot.classList.remove('bg-stone-500');
+                    } else {
+                        dot.classList.remove('bg-[#C5A880]', 'w-5');
+                        dot.classList.add('bg-stone-500');
+                    }
+                }
+            }
+        }
+
+        function nextSpread() {
+            if (currentSpreadIndex < generatedSpreads.length - 1) {
+                currentSpreadIndex++;
+                showActiveSpread();
+            }
+        }
+
+        function prevSpread() {
+            if (currentSpreadIndex > 0) {
+                currentSpreadIndex--;
+                showActiveSpread();
+            }
+        }
+
+        function jumpToSpread(index) {
+            currentSpreadIndex = index;
+            showActiveSpread();
+        }
+
+        function updateNavigationUI() {
+            showActiveSpread();
+        }
+
+        // --- STREAMING_CHUNK: Applying debounced resize listeners to smooth out scrolling... ---
+        // Trì hoãn xử lý co dãn thông minh (Debounce) để giữ hiệu suất ổn định không bị lag khi đổi khung màn hình
+        window.addEventListener('resize', debounce(() => {
+            if(!document.getElementById('storybook-app').classList.contains('hidden')) {
+                renderBookSpread();
+            }
+        }, 150));
+
+        // --- STREAMING_CHUNK: Managing music engine ... ---
+        function forcePlayMusic() {
+            const audio = document.getElementById('bg-music');
+            const icon = document.getElementById('music-icon');
+            const btn = document.getElementById('btn-toggle-music');
+            
+            audio.play().then(() => {
+                isMusicPlaying = true;
+                icon.classList.remove('paused');
+                btn?.classList.remove('pulse-audio');
+            }).catch(e => {
+                console.log("Trình duyệt chặn phát tự động. Cần tương tác người dùng.");
+                btn?.classList.add('pulse-audio');
+            });
+        }
+
+        function toggleMusic() {
+            const audio = document.getElementById('bg-music');
+            const icon = document.getElementById('music-icon');
+            const btn = document.getElementById('btn-toggle-music');
+            
+            if (!isMusicPlaying) {
+                audio.play().then(() => {
+                    isMusicPlaying = true;
+                    icon.classList.remove('paused');
+                    btn?.classList.remove('pulse-audio');
+                }).catch(e => {
+                    console.log("Không thể phát nhạc", e);
+                });
+            } else {
+                audio.pause();
+                isMusicPlaying = false;
+                icon.classList.add('paused');
+            }
+        }
+
+        function closeStoryBook() {
+            document.getElementById('storybook-app').classList.add('hidden');
+            document.getElementById('landing-view').classList.remove('hidden');
+            
+            // Dọn dẹp các tham số url tránh đè thông tin sau khi thoát
+            window.history.pushState({}, document.title, window.location.pathname);
+            
+            const audio = document.getElementById('bg-music');
+            audio.pause();
+            isMusicPlaying = false;
+            document.getElementById('music-icon').classList.add('paused');
+            window.scrollTo(0, 0);
+        }
+
+        // --- STREAMING_CHUNK: Packaging online link sharing... ---
+        function shareStory() {
+            const params = new URLSearchParams();
+            params.set('title', storyData.storyTitle);
+            params.set('author', storyData.authorName);
+            params.set('start', storyData.startDate);
+            params.set('end', storyData.endDate);
+            params.set('online', 'true');
+
+            const onlineUrl = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+            
+            const tempInput = document.createElement('input');
+            tempInput.value = onlineUrl;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            
+            try {
+                document.execCommand('copy');
+                showToast(`Đã sao chép liên kết cuốn sách online thành công!`);
+            } catch(e) {
+                showToast('Không thể tự động sao chép liên kết!');
+            }
+            document.body.removeChild(tempInput);
+        }
+
+        // --- ONLOAD ENTRY POINT ---
+        window.onload = function() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('online') === 'true') {
+                const title = params.get('title') || 'Cuộc Hành Trình Kỳ Diệu';
+                const author = params.get('author') || 'Người lữ hành';
+                const start = params.get('start') || '';
+                const end = params.get('end') || '';
+
+                // Trả về album ảnh tương ứng với tên chủ đề đã nhập cực kỳ thông minh
+                const normTitle = title.toLowerCase();
+                let imagesToUse = themeImages.generic;
+
+                if (normTitle.includes('phú quốc') || normTitle.includes('phu quoc') || normTitle.includes('biển') || normTitle.includes('đảo')) {
+                    imagesToUse = themeImages.phuquoc;
+                } else if (normTitle.includes('kyoto') || normTitle.includes('nhật') || normTitle.includes('japan')) {
+                    imagesToUse = themeImages.kyoto;
+                } else if (normTitle.includes('đà lạt') || normTitle.includes('da lat') || normTitle.includes('thông')) {
+                    imagesToUse = themeImages.dalat;
+                } else if (normTitle.includes('sapa') || normTitle.includes('núi') || normTitle.includes('mountain')) {
+                    imagesToUse = themeImages.sapa;
+                }
+
+                uploadedImages = imagesToUse.map((url, index) => {
+                    const orientation = index % 2 === 0 ? 'landscape' : 'portrait';
+                    return {
+                        id: 'online-' + index,
+                        url: url,
+                        caption: `Kỷ niệm tuyệt đẹp tại hành trình ${title}`,
+                        orientation: orientation,
+                        aspectRatio: orientation === 'landscape' ? 1.5 : 0.75
+                    };
+                });
+
+                document.getElementById('authorName').value = author;
+                document.getElementById('storyTitle').value = title;
+                document.getElementById('startDate').value = start;
+                document.getElementById('endDate').value = end;
+
+                storyData = { authorName: author, storyTitle: title, startDate: start, endDate: end };
+                
+                buildSpreads();
+                renderBookSpread();
+                
+                document.getElementById('storybook-app').classList.remove('hidden');
+                document.getElementById('landing-view').classList.add('hidden');
+                currentSpreadIndex = 0;
+                updateNavigationUI();
+                
+                setTimeout(() => {
+                    forcePlayMusic();
+                }, 800);
+                
+                showToast(`Đã tải thành công cuốn sách của ${author}! 🎉`);
+            }
+        }
+
+        document.getElementById('music-icon').classList.add('paused');
+
+        // Phím tắt bàn phím
+        document.addEventListener('keydown', (e) => {
+            if(!document.getElementById('storybook-app').classList.contains('hidden')) {
+                if(e.key === 'ArrowRight') nextSpread();
+                if(e.key === 'ArrowLeft') prevSpread();
+            }
+        });
+
+        // Swipe gestures on mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        document.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, { passive: true });
+
+        function handleSwipe() {
+            if (Math.abs(touchStartX - touchEndX) > 50) {
+                if (touchStartX > touchEndX) {
+                    nextSpread();
+                } else {
+                    prevSpread();
+                }
+            }
+        }
+    </script>
+</body>
+</html>
